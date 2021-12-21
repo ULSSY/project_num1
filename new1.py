@@ -1,10 +1,12 @@
 import streamlit as st
+import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
-import numpy as np
+import joblib
 from mysql_connection import get_connection
- 
+from mysql.connector.errors import Error
+from new4 import run_list_pro
 
 def run_fir_pro():
     df = pd.read_csv('data/OBS_계절관측.csv')
@@ -16,60 +18,79 @@ def run_fir_pro():
     if selected_radio=='동물':
        
         radio_menu=['제비','나비','잠자리','뻐꾸기','매미']
-        selected_radio=st.radio('선택하세요',radio_menu)
-
+        selected_radio=st.radio('컬럼을 선택하세요',radio_menu)
         if selected_radio=='제비':
-          
-            df=(df['계절관측']=='제비')!='false'
-            st.dataframe(df)
+            
+            radio_menu_1=['년도','날짜','계철관측','계절현상']
+            df1=selected_column=st.selectbox('컬럼을 선택하세요',radio_menu_1)
+            if radio_menu_1=='년도':
+                year=st.number_input('연도입력하기')
+
+                if st.button('저장하기'):
+                        try : 
+                               
+                            connection=get_connection()
+
+                            #2.쿼리문 만들고
+                            query='''insert into test_user
+                                    (email,password,age)
+                                    values
+                                    (%s,%s,%s);'''
+                            #튜플 데이터 한개 있을때 콤마를 꼭 
+                            #써주자
+                            record=(email,password,age)
+                            #3.커넥션으로부터 커서를 가져온다
+                            cursor=connection.cursor()
+                            #4쿼리문을 커서에 넣어서 실행한다
+                            cursor.execute(query,record)
+                            #5커넥션을 커밋한다->디비에 영구적으로 반영하라는 뜻
+                            connection.commit()
+                        except mysql.connector.Error as e:
+                            print('Error',e)
+                        finally:
+                            if connection.is_connected():
+                                cursor.close()
+                                connection.close()
+                                print('MySQL connection is closed')
+                                st.write('회원정보가 잘 저장됐습니다.')
+
+                             
         
-        elif selected_radio=='나비':
-            df=(df['계절관측']=='나비')!='false'
-            st.dataframe(df)
-        
-        elif selected_radio=='잠자리':
-            df=(df['계절관측']=='잠자리')!='false'
-            st.dataframe(df)
-        
-        elif selected_radio=='뻐꾸기':
-            df=(df['계절관측']=='뻐꾸기')!='false'
-            st.dataframe(df)
-        
-        elif selected_radio=='매미':
-            df=(df['계절관측']=='매미')!='false'
-            st.dataframe(df)
-    
-    
-        df = pd.read_csv('data/OBS_계절관측.csv')
-        df.set_index('지점',inplace=True)
        
 
-    elif selected_radio=='식물':
+
+
+    
+    #     df = pd.read_csv('data/OBS_계절관측.csv')
+    #     df.set_index('지점',inplace=True)
+       
+
+    # elif selected_radio=='식물':
        
         
-        radio_menu=['개나리','매화','코스모스','진달래','벚나무']
-        selected_radio=st.radio('선택하세요',radio_menu)
+    #     radio_menu=['개나리','매화','코스모스','진달래','벚나무']
+    #     selected_radio=st.radio('선택하세요',radio_menu)
 
-        if selected_radio=='개나리':
-            df1=(df['계절관측']=='개나리')!='false'
+    #     if selected_radio=='개나리':
+    #         run_list_pro()
            
-            df['년도':'계절현상']
-            pd.concat(df,df1)
+           
+          
          
-            # st.dataframe(df1)
+            
 
     #     elif selected_radio=='매화':
-    #         df1=(df['계절관측']=='매화')!='false'
-    #         st.dataframe(df1)
+    #         run_list_pro()
+            
     #     elif selected_radio=='코스모스':
-    #         df1=(df['계절관측']=='코스모스')!='false'
-    #         st.dataframe(df1)
+    #         run_list_pro()
+          
     #     elif selected_radio=='진달래':
-    #         df1=(df['계절관측']=='진달래')!='false'
-    #         st.dataframe(df1)
+    #         run_list_pro()
+            
     #     elif selected_radio=='벚나무':
-    #         df1=(df['계절관측']=='벚나무')!='false'
-    #         st.dataframe(df1)
+    #         run_list_pro()
+            
 
     #     df = pd.read_csv('data/OBS_계절관측.csv')
     #     df.set_index('지점',inplace=True)
@@ -80,11 +101,11 @@ def run_fir_pro():
     #     selected_radio=st.radio('선택하세요',radio_menu)
 
     #     if selected_radio=='서리':
-    #         df2=(df['계절관측']=='서리')!='false'
-    #         st.dataframe(df2)
+    #         run_list_pro()
+          
     #     elif selected_radio=='얼음':
-    #         df2=(df['계절관측']=='얼음')!='false'
-    #         st.dataframe(df2)
+    #         run_list_pro()
+            
     #     elif selected_radio=='눈':
-    #         df2=(df['계절관측']=='눈')!='false'
-    #         st.dataframe(df2)
+           
+    #         run_list_pro()
